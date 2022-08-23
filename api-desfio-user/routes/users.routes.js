@@ -14,4 +14,6 @@ usersRoutes.post('/create',  Users.create)
 
 usersRoutes.post('/recoverypassword',  Users.recovery)
 
+usersRoutes.post('/updatepassword',  Users.updatepassword)
+
 module.exports = usersRoutes;

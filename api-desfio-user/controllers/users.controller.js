@@ -2,7 +2,6 @@ const User = require('../models/Users')
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const sendMail = require('../Providers/mailProvider');
-const template = require('../template/userCreateMail');
 const crypto = require('crypto');
 
 exports.findAll = async (req, res) =>{
@@ -145,9 +144,6 @@ exports.findOne2 = async (req, res) => {
     erro: false,
     mensagem: "Login realizado com sucesso!!!",
     token,
-    // name: user.name,
-    // email: user.email,
-    // gender: user.gender
   });
 };
 
@@ -217,6 +213,30 @@ exports.recovery = async (req, res) => {
         res.status(400).json({
             erro:true,
             mensagem: "Erro: Não foi possivel enviar o código de verificação, tente de novo!"
+        })
+    }
+}
+
+exports.updatepassword = async (req, res) => {
+    const { email, verificationcode, password} = req.body;
+    try {
+        const user = await User.findOne({ verificationcode: token }, { where: { email: email }}, {password: password});
+        if (!user) {
+            return res.status(404).json({
+                erro: true,
+                mensagem: 'Error: Usuário não encontrado!'
+            })
+        }
+        if(verificationcode !== user) {
+            return res.status(403).json({
+                erro: true,
+                mensagem: "Erro: Token inválido!"
+            })
+        }
+    } catch (error) {
+        res.status(400).json({
+            erro: true,
+            mensagem: "Erro: Não foi possível alterar a senha!!"
         })
     }
 }
