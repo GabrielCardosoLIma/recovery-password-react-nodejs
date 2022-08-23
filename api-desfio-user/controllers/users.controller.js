@@ -2,6 +2,7 @@ const User = require('../models/Users')
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const sendMail = require('../Providers/mailProvider');
+const template = require('../template/userCreateMail');
 const crypto = require('crypto');
 
 exports.findAll = async (req, res) =>{
@@ -181,22 +182,41 @@ exports.recovery = async (req, res) => {
         const token = crypto.randomBytes(6).toString('hex')
         await User.update({ verificationcode: token }, { where: { email: email } })
         .then(() => {
+        let to = email;
+        let cc = '';
+        var htmlbody = "";
+        htmlbody += 'Olá Usuário(a), sua solicitação de troca de senha foi gerada com sucesso !';
+        htmlbody += '</br>';
+        htmlbody += '</br>';
+        htmlbody += 'Seus dados cadastrados:';
+        htmlbody += '<br>';
+        htmlbody += 'E-mail: <strong>{email}</strong>';
+        htmlbody += '</br>';
+        htmlbody += 'Para continuar com o processo de troca de Senha é necessário usar o código abaixo:'
+        htmlbody += '</br>';
+        htmlbody += '<strong>{token}</strong>'
+        htmlbody += '</div>';
+        htmlbody += '</div>';
+        htmlbody = htmlbody.replace('{email}', email);
+        htmlbody = htmlbody.replace('{token}', token);
+        /* ************* */
+        sendMail(to, cc, 'Código de recuperação de senha!', htmlbody);
             return res.json({
-              erro: false,
-              mensagem: "Senha edita com sucesso!",
+                erro: false,
+                mensagem: "Seu código de verificação foi enviado ao seu e-mail!",
             });
-          })
+        })
           .catch((err) => {
             return res.status(400).json({
               erro: true,
-              mensagem: `Erro: ${err}... A senha não foi alterada!!!`,
+              mensagem: `Erro: ${err}... O código de verificação não foi enviado!`,
             });
           });
     } catch (error) {
         console.log(error);
         res.status(400).json({
             erro:true,
-            mensagem: "Erro: Senha não foi alterada, tente de novo!"
+            mensagem: "Erro: Não foi possivel enviar o código de verificação, tente de novo!"
         })
     }
 }
