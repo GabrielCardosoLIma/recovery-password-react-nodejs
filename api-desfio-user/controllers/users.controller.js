@@ -217,10 +217,9 @@ exports.recovery = async (req, res) => {
     }
 }
 
-exports.updatepassword = async (req, res) => {
-    const { email, verificationcode} = req.body;
+exports.updatepassword = async (req, res, next) => {
+    const { email, verificationcode, password} = req.body;
     const { token } = verificationcode;
-    const { Password } = req.body;
     try {
         const user = await User.findOne({ verificationcode: token }, { where: { email: email }})
         if (email !== user.email) {
@@ -235,12 +234,12 @@ exports.updatepassword = async (req, res) => {
                 mensagem: `Sucesso!`
             })
         }else {
-            return res.status(403).json({
-                erro: true,
-                mensagem: "Erro: Token inválido!"
+            res.status(400).json({
+                erro:true,
+                mensagem: `Erro: Token Inválido!`
             })
         }
-        const newPassword = await bycrypt.hash(email, 8)
+        const newPassword = await bcrypt.hash(password, 8)
         newPassword = await User.update({ password: newPassword }, { where: { email: email } })
         .then(() => {
             return res.status(200).json({
@@ -254,9 +253,6 @@ exports.updatepassword = async (req, res) => {
             })
         })
     } catch (error) {
-        res.status(400).json({
-            erro: true,
-            mensagem: `Error: ${error}`
-        })
+        next(error);
     }
     }
