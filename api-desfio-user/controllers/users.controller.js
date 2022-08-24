@@ -218,25 +218,45 @@ exports.recovery = async (req, res) => {
 }
 
 exports.updatepassword = async (req, res) => {
-    const { email, verificationcode, password} = req.body;
+    const { email, verificationcode} = req.body;
+    const { token } = verificationcode;
+    const { Password } = req.body;
     try {
-        const user = await User.findOne({ verificationcode: token }, { where: { email: email }}, {password: password});
-        if (!user) {
+        const user = await User.findOne({ verificationcode: token }, { where: { email: email }})
+        if (email !== user.email) {
             return res.status(404).json({
                 erro: true,
                 mensagem: 'Error: Usuário não encontrado!'
             })
         }
-        if(verificationcode !== user) {
+        if(verificationcode === user.verificationcode) {
+            res.status(200).json({
+                erro: false,
+                mensagem: `Sucesso!`
+            })
+        }else {
             return res.status(403).json({
                 erro: true,
                 mensagem: "Erro: Token inválido!"
             })
         }
+        const newPassword = await bycrypt.hash(email, 8)
+        newPassword = await User.update({ password: newPassword }, { where: { email: email } })
+        .then(() => {
+            return res.status(200).json({
+                erro: false,
+                mensagem: `Sucesso!`
+            })
+        }).catch((err) => {
+            return res.status(400).json({
+                erro: false,
+                mensagem: `Erro: ${err}!`
+            })
+        })
     } catch (error) {
         res.status(400).json({
             erro: true,
-            mensagem: "Erro: Não foi possível alterar a senha!!"
+            mensagem: `Error: ${error}`
         })
     }
-}
+    }
