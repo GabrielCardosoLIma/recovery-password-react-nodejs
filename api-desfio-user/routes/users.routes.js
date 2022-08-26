@@ -1,16 +1,16 @@
 const usersRoutes = require('express').Router();
-// const { validarToken } = require('../middlewares/Auth')
+const { validarToken } = require('../middlewares/Auth')
 const Users = require('../controllers/users.controller');
 
-usersRoutes.get('/validatoken', Users.validaToken)
+usersRoutes.get('/validatoken', validarToken, Users.validaToken)
 
-usersRoutes.get('/all',  Users.findAll)
+usersRoutes.get('/all',  validarToken, Users.findAll)
 
-usersRoutes.get('/show/:id',  Users.findOne)
+usersRoutes.get('/show/:id',  validarToken, Users.findOne)
 
 usersRoutes.post('/login', Users.findOne2)
 
-usersRoutes.post('/create',  Users.create)
+usersRoutes.post('/create',  validarToken, Users.create)
 
 usersRoutes.post('/recoverypassword',  Users.recovery)
 
