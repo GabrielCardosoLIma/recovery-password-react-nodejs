@@ -1,5 +1,4 @@
-import React, { useState, useContext } from "react";
-// import Container from "react-bootstrap/container";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from 'react-bootstrap/Alert';
@@ -9,7 +8,7 @@ import { LockLaminated  } from "phosphor-react";
 import api from "../../services/api";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./styles.css";
+import "./login.css";
 
 export function Login() {
   const history = useHistory();
@@ -33,8 +32,6 @@ export function Login() {
 
   const loginSubmit = async (e) => {
     e.preventDefault();
-    // console.log(user.email);
-    // console.log(user.password);
     const headers = {
       "Content-Type": "application/json",
     };
@@ -53,7 +50,6 @@ export function Login() {
           mensagem: "erro: tente mais tarde!",
         });
         if (error.response) {
-          // console.log(error.response)
           setStatus({
             type: "error",
             mensagem: error.response.data.mensagem,

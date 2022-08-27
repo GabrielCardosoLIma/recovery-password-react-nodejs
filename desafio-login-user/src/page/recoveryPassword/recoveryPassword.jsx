@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import api from "../../services/api";
 import { useHistory } from "react-router-dom";
 import { UserCircle } from "phosphor-react";
@@ -36,7 +36,11 @@ export const RecoveryPassword = () => {
     };
     await api.post("/user/recoverypassword", user, headers)
           .then( (response) => {
-                  setStatus({loading: false});
+                  setStatus({
+                    type: "success",
+                    mensagem: "E-mail enviado com sucesso!",
+                    loading: false
+                  });
                   return history.push('/updatepassword')
               }).catch( (err) => {
                   if(err.response){

@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import api from "../../services/api";
 import { UserCircle } from "phosphor-react";
 import Button from "react-bootstrap/Button";
+import Alert from 'react-bootstrap/Alert';
 import Form from "react-bootstrap/Form";
 import "./updatePassword.css";
 
-export const Categories = (props) => {
+export const updatePassword = () => {
   const history = useHistory();
-
-  const [id] = useState(props.match.params.id);
 
   const [status, setStatus] = useState({
     type: "",
@@ -41,7 +40,7 @@ export const Categories = (props) => {
       .post("/user/updatepassword", user, headers)
       .then((response) => {
         setStatus({ loading: false });
-        return history.push("/updatepassword");
+        return history.push("/");
       })
       .catch((err) => {
         if (err.response) {
@@ -59,20 +58,10 @@ export const Categories = (props) => {
         }
       });
   };
-  // var password = document.getElementById("password"),
-  //   confirm_password = document.getElementById("confirm_password");
-  // function validatePassword() {
-  //   if (password.value != confirm_password.value) {
-  //     confirm_password.setCustomValidity("Senhas diferentes!");
-  //   } else {
-  //     confirm_password.setCustomValidity("");
-  //   }
-  // }
-  // password.onchange = validatePassword;
-  // confirm_password.onkeyup = validatePassword;
   return (
     <div className="box">
       <Form onSubmit={formSubmit} className="borderForm">
+        <Alert variant="success">E-mail enviado com sucesso!</Alert>
         <h1>Recuperação de senha</h1>
         {status.type == "error" ? (
           <h3 className="p-alert-error">{status.mensagem}</h3>
@@ -110,34 +99,26 @@ export const Categories = (props) => {
             placeholder="Digite o seu código"
           />
         </Form.Group>
-        {!id && (
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label className="FormLabel">Nova senha:</Form.Label>
             <Form.Control
-              id="password"
               type="password"
               name="password"
               onChange={valorInput}
-              value={user.password}
-              placeholder="Digite o sua nova senha"
+              placeholder="Digite a sua nova senha"
               required
             />
           </Form.Group>
-        )}
-        {!id && (
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label className="FormLabel">Confirme a senha:</Form.Label>
             <Form.Control
-              id="confirm_password"
               type="password"
-              name="password"
+              name="confirmpassword"
               onChange={valorInput}
-              value={user.password}
-              placeholder="Digite o sua nova senha novamente"
+              placeholder="Digite a sua nova senha novamente"
               required
             />
           </Form.Group>
-        )}
         {status.loading ? (
           <Button variant="Secondary" disabled type="submit">
             Aguarde...

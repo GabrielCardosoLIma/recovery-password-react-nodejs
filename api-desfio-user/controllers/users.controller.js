@@ -164,7 +164,7 @@ exports.recovery = async (req, res) => {
     const { email } = req.body;
     try {
         const user = await User.findOne({ email })
-        if (!user) {
+        if (email !== user.email) {
             return res.status(404).json({
                 erro: true,
                 mensagem: 'Error: Usuário não encontrado!'
@@ -213,25 +213,26 @@ exports.recovery = async (req, res) => {
 }
 
 exports.updatepassword = async (req, res, next) => {
-    const { email, verificationcode, password} = req.body;
+    const { email, verificationcode, password, confirmpassword} = req.body;
     const { token } = verificationcode;
     try {
         const user = await User.findOne({ verificationcode: token }, { where: { email: email }})
         if (email !== user.email) {
-            return res.status(404).json({
+            return res.status(400).json({
                 erro: true,
                 mensagem: 'Error: Usuário não encontrado!'
             })
         }
-        if(verificationcode === user.verificationcode) {
-            res.status(200).json({
-                erro: false,
-                mensagem: `Sucesso!`
-            })
-        }else {
+        if(verificationcode !== user.verificationcode) {
             res.status(400).json({
                 erro:true,
-                mensagem: `Erro: Token Inválido!`
+                mensagem: 'Erro: Token Inválido!'
+            })
+        }
+        if(password !== confirmpassword) {
+            return res.status(400).json({
+                erro: true,
+                mensagem: 'Erro: Senhas diferentes!'
             })
         }
         const newPassword = await bcrypt.hash(password, 8)

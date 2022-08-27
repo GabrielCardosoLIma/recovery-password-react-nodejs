@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Login } from '../components/Login/Login';
 import { RecoveryPassword } from '../page/recoveryPassword/recoveryPassword';
-import { Categories } from '../page/updatePassword/updatePassword';
+import { updatePassword } from '../page/updatePassword/updatePassword';
 import { Context } from '../context/AuthContext';
 
 function CustomRoute({ isPrivate, ...rest}){
@@ -18,7 +18,7 @@ export default function PrivateRoute(){
         <Switch>
             <CustomRoute exact path="/" component={Login} />
             <CustomRoute path="/recoverypassword" component={RecoveryPassword} />
-            <CustomRoute path="/updatepassword" component={Categories} />
+            <CustomRoute path="/updatepassword" component={updatePassword} />
         </Switch>
     )
 };
