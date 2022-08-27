@@ -136,14 +136,9 @@ exports.findOne2 = async (req, res) => {
     });
   }
 
-  var token = jwt.sign({ id: user.id }, process.env.SECRET, {
-    expiresIn: 900, //10min
-  });
-
   return res.json({
     erro: false,
-    mensagem: "Login realizado com sucesso!!!",
-    token,
+    mensagem: "Login realizado com sucesso!!!"
   });
 };
 
